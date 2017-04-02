@@ -6,3 +6,4 @@ authors = ["Thomas Röggla <tom@lichtfragmente.com>"]
 [dependencies]
 image = "*"
 num = "*"
+threadpool = "*"
