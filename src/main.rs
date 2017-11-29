@@ -13,7 +13,7 @@ use time::PreciseTime;
 struct MandelbrotPoint {
     x: u32,
     y: u32,
-    pixel: image::Rgb<u8>,
+    color: image::Rgb<u8>
 }
 
 fn mandelbrot(z: Complex<f32>, c: Complex<f32>) -> Complex<f32> {
@@ -32,6 +32,22 @@ fn in_mandelbrot_set(c: Complex<f32>, iterations: i32) -> (bool, i32) {
     }
 
     (true, iterations)
+}
+
+fn get_mandelbrot_color(c: Complex<f32>, iterations: i32) -> image::Rgb<u8> {
+    let (in_set, iterations_taken) = in_mandelbrot_set(c, iterations);
+
+    if in_set {
+        image::Rgb([0, 0, 0])
+    } else {
+        let color = ((255 / iterations * 2) * iterations_taken) as u8;
+
+        image::Rgb([
+            color,
+            color,
+            color
+        ])
+    }
 }
 
 fn main() {
@@ -57,22 +73,12 @@ fn main() {
                     -((y as f32 * r / height as f32) - r / 2.0) + center.1
                 );
 
-                let (in_set, iterations_taken) = in_mandelbrot_set(c, iterations);
-                let pixel: image::Rgb<u8>;
+                let point = MandelbrotPoint{
+                    x: x, y: y,
+                    color: get_mandelbrot_color(c, iterations)
+                };
 
-                if in_set {
-                    pixel = image::Rgb([0, 0, 0]);
-                } else {
-                    let color = ((255 / iterations * 2) * iterations_taken) as u8;
-
-                    pixel = image::Rgb([
-                        color,
-                        color,
-                        color
-                    ]);
-                }
-
-                tx.send(MandelbrotPoint{ x: x, y: y, pixel: pixel })
+                tx.send(point)
                   .expect("Could not send");
             });
         }
@@ -81,10 +87,10 @@ fn main() {
     let mut count = 0;
     rx.iter().take((width * height) as usize).for_each(|point| {
         if count % 10000 == 0 {
-            println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.pixel);
+            println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.color);
         }
 
-        imgbuf.put_pixel(point.x, point.y, point.pixel);
+        imgbuf.put_pixel(point.x, point.y, point.color);
         count += 1;
     });
 
