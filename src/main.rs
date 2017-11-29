@@ -1,12 +1,14 @@
 extern crate image;
 extern crate num;
 extern crate threadpool;
+extern crate time;
 
 use num::complex::Complex;
 use std::fs::File;
 use std::path::Path;
 use std::sync::mpsc::channel;
 use threadpool::ThreadPool;
+use time::PreciseTime;
 
 struct MandelbrotPoint {
     x: u32,
@@ -33,6 +35,7 @@ fn in_mandelbrot_set(c: Complex<f32>, iterations: i32) -> (bool, i32) {
 }
 
 fn main() {
+    let start = PreciseTime::now();
     let iterations = 250;
     let num_threads = 10;
 
@@ -77,7 +80,7 @@ fn main() {
 
     let mut count = 0;
     rx.iter().take((width * height) as usize).for_each(|point| {
-        if count % 100 == 0 {
+        if count % 10000 == 0 {
             println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.pixel);
         }
 
@@ -89,4 +92,7 @@ fn main() {
 
     let ref mut fname = File::create(&Path::new("fractal.png")).unwrap();
     let _ = image::ImageRgb8(imgbuf).save(fname, image::PNG);
+
+    let end = PreciseTime::now();
+    println!("Time taken: {}s", start.to(end).num_seconds());
 }
