@@ -111,7 +111,10 @@ fn main() {
             println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.color);
         }
 
-        imgbuf.put_pixel(point.x, point.y, point.color);
+        if point.color != image::Rgb([0, 0, 0]) {
+            imgbuf.put_pixel(point.x, point.y, point.color);
+        }
+
         count += 1;
     });
 
