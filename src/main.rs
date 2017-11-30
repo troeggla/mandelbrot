@@ -1,8 +1,10 @@
+extern crate argparse;
 extern crate image;
 extern crate num;
 extern crate threadpool;
 extern crate time;
 
+use argparse::{ArgumentParser, Store, StoreTrue};
 use num::complex::Complex;
 use std::fs::File;
 use std::path::Path;
@@ -40,7 +42,7 @@ fn get_mandelbrot_color(c: Complex<f32>, iterations: i32) -> image::Rgb<u8> {
     if in_set {
         image::Rgb([0, 0, 0])
     } else {
-        let color = ((255 / iterations * 2) * iterations_taken) as u8;
+        let color = ((iterations_taken as f32 / iterations as f32) * 255.0) as u8;
 
         image::Rgb([
             color,
@@ -51,11 +53,30 @@ fn get_mandelbrot_color(c: Complex<f32>, iterations: i32) -> image::Rgb<u8> {
 }
 
 fn main() {
+    let mut verbose = false;
+    let mut width = 1000;
+    let mut height = 1000;
+    let mut iterations = 250;
+
+    {
+        let mut ap = ArgumentParser::new();
+
+        ap.set_description("Renders images of portions of the Mandelbrot set.");
+        ap.refer(&mut verbose)
+          .add_option(&["-v", "--verbose"], StoreTrue, "Enable verbose output");
+        ap.refer(&mut width)
+          .add_option(&["-w", "--width"], Store, "Output image width (default 1000)");
+        ap.refer(&mut height)
+          .add_option(&["-h", "--height"], Store, "Output image height (default 1000)");
+        ap.refer(&mut iterations)
+          .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
+
+        ap.parse_args_or_exit();
+    }
+
     let start = PreciseTime::now();
-    let iterations = 250;
     let num_threads = 10;
 
-    let (width, height) = (1000, 1000);
     let center: (f32, f32) = (-0.75, 0.3);
     let r: f32 = 0.5;
 
@@ -86,7 +107,7 @@ fn main() {
 
     let mut count = 0;
     rx.iter().take((width * height) as usize).for_each(|point| {
-        if count % 10000 == 0 {
+        if verbose && count % 10000 == 0 {
             println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.color);
         }
 
