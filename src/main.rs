@@ -78,6 +78,7 @@ fn main() {
     let mut width = 1000;
     let mut height = 1000;
     let mut iterations = 250;
+    let mut num_threads = 10;
 
     {
         let mut ap = ArgumentParser::new();
@@ -93,12 +94,13 @@ fn main() {
           .add_option(&["-h", "--height"], Store, "Output image height (default 1000)");
         ap.refer(&mut iterations)
           .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
+        ap.refer(&mut num_threads)
+          .add_option(&["-t", "--threads"], Store, "Number of threads to spawn (default 10)");
 
         ap.parse_args_or_exit();
     }
 
     let start = PreciseTime::now();
-    let num_threads = 10;
 
     let center: (f32, f32) = (-0.75, 0.3);
     let r: f32 = 0.5;
