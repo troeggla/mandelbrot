@@ -74,6 +74,7 @@ fn get_mandelbrot_color(c: Complex<f32>, iterations: i32, color: bool) -> image:
 
 fn main() {
     let mut verbose = false;
+    let mut color = false;
     let mut width = 1000;
     let mut height = 1000;
     let mut iterations = 250;
@@ -84,6 +85,8 @@ fn main() {
         ap.set_description("Renders images of portions of the Mandelbrot set.");
         ap.refer(&mut verbose)
           .add_option(&["-v", "--verbose"], StoreTrue, "Enable verbose output");
+        ap.refer(&mut color)
+          .add_option(&["-c", "--color"], StoreTrue, "Generate output image in colour");
         ap.refer(&mut width)
           .add_option(&["-w", "--width"], Store, "Output image width (default 1000)");
         ap.refer(&mut height)
@@ -120,7 +123,7 @@ fn main() {
 
                 let point = MandelbrotPoint{
                     x: x, y: y,
-                    color: get_mandelbrot_color(c, iterations)
+                    color: get_mandelbrot_color(c, iterations, color)
                 };
 
                 tx.send(point)
