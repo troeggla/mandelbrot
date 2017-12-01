@@ -7,5 +7,6 @@ authors = ["Thomas Röggla <tom@lichtfragmente.com>"]
 argparse = "*"
 image = "*"
 num = "*"
+pbr = "*"
 threadpool = "*"
 time = "*"
