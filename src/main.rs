@@ -58,13 +58,17 @@ fn get_color_pixel(ratio: f32) -> image::Rgb<u8> {
     image::Rgb([r, g, b])
 }
 
-fn get_mandelbrot_color(c: Complex<f32>, iterations: i32) -> image::Rgb<u8> {
+fn get_mandelbrot_color(c: Complex<f32>, iterations: i32, color: bool) -> image::Rgb<u8> {
     let (in_set, iterations_taken) = in_mandelbrot_set(c, iterations);
 
     if in_set {
         image::Rgb([0, 0, 0])
     } else {
-        get_greyscale_pixel(iterations_taken as f32 / iterations as f32)
+        if color {
+            get_color_pixel(iterations_taken as f32 / iterations as f32)
+        } else {
+            get_greyscale_pixel(iterations_taken as f32 / iterations as f32)
+        }
     }
 }
 
