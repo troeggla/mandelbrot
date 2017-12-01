@@ -100,6 +100,10 @@ fn main() {
     let (tx, rx) = channel();
     let mut imgbuf = image::ImageBuffer::new(width, height);
 
+    if verbose {
+        println!("Generating Mandelbrot set of size {}x{} with iteration depth {}...", width, height, iterations);
+    }
+
     for x in 0..width {
         for y in 0..height {
             let tx = tx.clone();
@@ -143,6 +147,8 @@ fn main() {
     let ref mut fname = File::create(&Path::new("fractal.png")).unwrap();
     let _ = image::ImageRgb8(imgbuf).save(fname, image::PNG);
 
-    let end = PreciseTime::now();
-    println!("Time taken: {}s", start.to(end).num_seconds());
+    if verbose {
+        let end = PreciseTime::now();
+        println!("Time taken: {}s", start.to(end).num_seconds());
+    }
 }
