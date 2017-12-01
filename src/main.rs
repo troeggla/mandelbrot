@@ -1,11 +1,13 @@
 extern crate argparse;
 extern crate image;
 extern crate num;
+extern crate pbr;
 extern crate threadpool;
 extern crate time;
 
 use argparse::{ArgumentParser, Store, StoreTrue};
 use num::complex::Complex;
+use pbr::ProgressBar;
 use std::fs::File;
 use std::path::Path;
 use std::sync::mpsc::channel;
@@ -119,20 +121,24 @@ fn main() {
         }
     }
 
+    let mut progress = ProgressBar::new((width * height) as u64);
     let mut count = 0;
-    rx.iter().take((width * height) as usize).for_each(|point| {
-        if verbose && count % 10000 == 0 {
-            println!("Processing point {}/{}: x:{} y:{} rgb:{:?}", count, width * height, point.x, point.y, point.color);
-        }
 
+    rx.iter().take((width * height) as usize).for_each(|point| {
         if point.color != image::Rgb([0, 0, 0]) {
             imgbuf.put_pixel(point.x, point.y, point.color);
         }
 
+        if verbose && count % 10000 == 0 {
+            progress.add(10000);
+        }
         count += 1;
     });
 
-    println!("Generating output...");
+    if verbose {
+        progress.finish();
+        println!("Generating output...");
+    }
 
     let ref mut fname = File::create(&Path::new("fractal.png")).unwrap();
     let _ = image::ImageRgb8(imgbuf).save(fname, image::PNG);
