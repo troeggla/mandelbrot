@@ -121,7 +121,10 @@ fn main() {
     let mut imgbuf = image::ImageBuffer::new(width, height);
 
     if verbose {
-        println!("Generating Mandelbrot set of size {}x{} with iteration depth {}...", width, height, iterations);
+        println!(
+            "=> Generating output image of size {}x{} at point ({}, {}) with radius {} and iteration depth {}...",
+            width, height, center.0, center.1, r, iterations
+        );
     }
 
     for x in 0..width {
@@ -161,7 +164,7 @@ fn main() {
 
     if verbose {
         progress.finish();
-        println!("Generating output...");
+        println!("=> Saving output image...");
     }
 
     let ref mut fname = File::create(&Path::new("fractal.png")).unwrap();
@@ -169,6 +172,6 @@ fn main() {
 
     if verbose {
         let end = PreciseTime::now();
-        println!("Time taken: {}s", start.to(end).num_seconds());
+        println!("=> Time taken: {}s", start.to(end).num_seconds());
     }
 }
