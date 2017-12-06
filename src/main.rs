@@ -20,6 +20,14 @@ struct MandelbrotPoint {
     color: image::Rgb<u8>
 }
 
+fn parse_list<T: std::str::FromStr>(dimensions: String, delimiter: &str) -> (T, T) {
+    let mut result: Vec<T> = dimensions.split(delimiter).take(2).map(|s| {
+        s.parse::<T>().ok().unwrap()
+    }).collect();
+
+    (result.remove(0), result.remove(0))
+}
+
 fn mandelbrot(z: Complex<f32>, c: Complex<f32>) -> Complex<f32> {
     num::pow(z, 2) + c
 }
