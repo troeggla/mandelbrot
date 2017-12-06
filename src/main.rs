@@ -88,6 +88,7 @@ fn main() {
     let mut num_threads = 10;
     let mut center = "-0.75,0.3".to_string();
     let mut r: f32 = 0.5;
+    let mut fname = "fractal.png".to_string();
 
     {
         let mut ap = ArgumentParser::new();
@@ -107,6 +108,8 @@ fn main() {
           .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
         ap.refer(&mut num_threads)
           .add_option(&["-t", "--threads"], Store, "Number of threads to spawn (default 10)");
+        ap.refer(&mut fname)
+          .add_option(&["-f", "--fname"], Store, "Output file name (default 'fractal.png')");
 
         ap.parse_args_or_exit();
     }
@@ -167,11 +170,13 @@ fn main() {
         println!("=> Saving output image...");
     }
 
-    let ref mut fname = File::create(&Path::new("fractal.png")).unwrap();
-    let _ = image::ImageRgb8(imgbuf).save(fname, image::PNG);
+    let ref mut outfile = File::create(&Path::new(&fname)).unwrap();
+    let _ = image::ImageRgb8(imgbuf).save(outfile, image::PNG);
 
     if verbose {
         let end = PreciseTime::now();
+
+        println!("=> Output image saved as '{}'", fname);
         println!("=> Time taken: {}s", start.to(end).num_seconds());
     }
 }
