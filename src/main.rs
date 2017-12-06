@@ -87,6 +87,7 @@ fn main() {
     let mut iterations = 250;
     let mut num_threads = 10;
     let mut center = "-0.75,0.3".to_string();
+    let mut r: f32 = 0.5;
 
     {
         let mut ap = ArgumentParser::new();
@@ -100,6 +101,8 @@ fn main() {
           .add_option(&["-s", "--size"], Store, "Output image dimensions, separated by space (default 1000x1000)");
         ap.refer(&mut center)
           .add_option(&["-c", "--center"], Store, "Centre point of the set (default -0.75,0.3)");
+        ap.refer(&mut r)
+          .add_option(&["-r", "--radius"], Store, "Radius of the set to be examined (default 0.5)");
         ap.refer(&mut iterations)
           .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
         ap.refer(&mut num_threads)
@@ -112,11 +115,9 @@ fn main() {
     let center: (f32, f32) = parse_list(center, ",");
 
     let start = PreciseTime::now();
-
-    let r: f32 = 0.5;
-
     let pool = ThreadPool::new(num_threads);
     let (tx, rx) = channel();
+
     let mut imgbuf = image::ImageBuffer::new(width, height);
 
     if verbose {
