@@ -83,10 +83,10 @@ fn get_mandelbrot_color(c: Complex<f32>, iterations: i32, color: bool) -> image:
 fn main() {
     let mut verbose = false;
     let mut color = false;
-    let mut width = 1000;
-    let mut height = 1000;
+    let mut dimensions = "1000x1000".to_string();
     let mut iterations = 250;
     let mut num_threads = 10;
+    let mut center = "-0.75,0.3".to_string();
 
     {
         let mut ap = ArgumentParser::new();
@@ -96,10 +96,10 @@ fn main() {
           .add_option(&["-v", "--verbose"], StoreTrue, "Enable verbose output");
         ap.refer(&mut color)
           .add_option(&["-c", "--color"], StoreTrue, "Generate output image in colour");
-        ap.refer(&mut width)
-          .add_option(&["-w", "--width"], Store, "Output image width (default 1000)");
-        ap.refer(&mut height)
-          .add_option(&["-h", "--height"], Store, "Output image height (default 1000)");
+        ap.refer(&mut dimensions)
+          .add_option(&["-s", "--size"], Store, "Output image dimensions, separated by space (default 1000x1000)");
+        ap.refer(&mut center)
+          .add_option(&["-c", "--center"], Store, "Centre point of the set (default -0.75,0.3)");
         ap.refer(&mut iterations)
           .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
         ap.refer(&mut num_threads)
@@ -108,9 +108,11 @@ fn main() {
         ap.parse_args_or_exit();
     }
 
+    let (width, height) = parse_list(dimensions, "x");
+    let center: (f32, f32) = parse_list(center, ",");
+
     let start = PreciseTime::now();
 
-    let center: (f32, f32) = (-0.75, 0.3);
     let r: f32 = 0.5;
 
     let pool = ThreadPool::new(num_threads);
