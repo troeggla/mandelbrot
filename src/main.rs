@@ -90,26 +90,30 @@ fn main() {
     let mut r: f32 = 0.5;
     let mut fname = "fractal.png".to_string();
 
+    let help_texts = vec![
+        format!("Enable verbose output"),
+        format!("Generate output image in colour"),
+        format!("Output image dimensions, separated by 'x' (default {})", dimensions),
+        format!("Centre point of the set separated by comma (default {})", center),
+        format!("Radius of the set to be examined (default {})", r),
+        format!("Number of iterations (default {})", iterations),
+        format!("Number of threads to spawn (default {})", num_threads),
+        format!("Output file name (default '{}')", fname)
+    ];
+
     {
         let mut ap = ArgumentParser::new();
 
         ap.set_description("Renders images of portions of the Mandelbrot set.");
-        ap.refer(&mut verbose)
-          .add_option(&["-v", "--verbose"], StoreTrue, "Enable verbose output");
-        ap.refer(&mut color)
-          .add_option(&["-c", "--color"], StoreTrue, "Generate output image in colour");
-        ap.refer(&mut dimensions)
-          .add_option(&["-s", "--size"], Store, "Output image dimensions, separated by space (default 1000x1000)");
-        ap.refer(&mut center)
-          .add_option(&["-c", "--center"], Store, "Centre point of the set (default -0.75,0.3)");
-        ap.refer(&mut r)
-          .add_option(&["-r", "--radius"], Store, "Radius of the set to be examined (default 0.5)");
-        ap.refer(&mut iterations)
-          .add_option(&["-i", "--iterations"], Store, "Number of iterations (default 250)");
-        ap.refer(&mut num_threads)
-          .add_option(&["-t", "--threads"], Store, "Number of threads to spawn (default 10)");
-        ap.refer(&mut fname)
-          .add_option(&["-f", "--fname"], Store, "Output file name (default 'fractal.png')");
+
+        ap.refer(&mut verbose).add_option(&["-v", "--verbose"], StoreTrue, &help_texts[0]);
+        ap.refer(&mut color).add_option(&["-c", "--color"], StoreTrue, &help_texts[1]);
+        ap.refer(&mut dimensions).add_option(&["-s", "--size"], Store, &help_texts[2]);
+        ap.refer(&mut center).add_option(&["-c", "--center"], Store, &help_texts[3]);
+        ap.refer(&mut r).add_option(&["-r", "--radius"], Store, &help_texts[4]);
+        ap.refer(&mut iterations).add_option(&["-i", "--iterations"], Store, &help_texts[5]);
+        ap.refer(&mut num_threads).add_option(&["-t", "--threads"], Store, &help_texts[6]);
+        ap.refer(&mut fname).add_option(&["-f", "--fname"], Store, &help_texts[7]);
 
         ap.parse_args_or_exit();
     }
