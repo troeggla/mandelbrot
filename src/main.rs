@@ -12,11 +12,10 @@ use argparse::{ArgumentParser, Store, StoreTrue};
 use mandelbrot::{get_mandelbrot_color, MandelbrotPoint};
 use num::complex::Complex;
 use pbr::ProgressBar;
-use std::fs::File;
 use std::path::Path;
 use std::sync::mpsc::channel;
 use threadpool::ThreadPool;
-use time::PreciseTime;
+use time::Instant;
 
 fn main() {
     let mut verbose = false;
@@ -28,18 +27,18 @@ fn main() {
     let mut r: f32 = 0.5;
     let mut fname = "fractal.png".to_string();
 
-    let help_texts = vec![
-        format!("Enable verbose output"),
-        format!("Generate output image in colour"),
-        format!("Output image dimensions, separated by 'x' (default {})", dimensions),
-        format!("Centre point of the set separated by comma (default {})", center),
-        format!("Radius of the set to be examined (default {})", r),
-        format!("Number of iterations (default {})", iterations),
-        format!("Number of threads to spawn (default {})", num_threads),
-        format!("Output file name (default '{}')", fname)
-    ];
-
     {
+        let help_texts = vec![
+            format!("Enable verbose output"),
+            format!("Generate output image in colour"),
+            format!("Output image dimensions, separated by 'x' (default {})", dimensions),
+            format!("Centre point of the set separated by comma (default {})", center),
+            format!("Radius of the set to be examined (default {})", r),
+            format!("Number of iterations (default {})", iterations),
+            format!("Number of threads to spawn (default {})", num_threads),
+            format!("Output file name (default '{}')", fname)
+        ];
+
         let mut ap = ArgumentParser::new();
 
         ap.set_description("Renders images of portions of the Mandelbrot set.");
@@ -59,7 +58,7 @@ fn main() {
     let (width, height) = util::parse_list(dimensions, "x");
     let center: (f32, f32) = util::parse_list(center, ",");
 
-    let start = PreciseTime::now();
+    let start = Instant::now();
     let pool = ThreadPool::new(num_threads);
     let (tx, rx) = channel();
 
@@ -112,13 +111,10 @@ fn main() {
         println!("=> Saving output image...");
     }
 
-    let ref mut outfile = File::create(&Path::new(&fname)).unwrap();
-    let _ = image::ImageRgb8(imgbuf).save(outfile, image::PNG);
+    let _ = image::DynamicImage::ImageRgb8(imgbuf).save(Path::new(&fname));
 
     if verbose {
-        let end = PreciseTime::now();
-
         println!("=> Output image saved as '{}'", fname);
-        println!("=> Time taken: {}s", start.to(end).num_seconds());
+        println!("=> Time taken: {:.2}s", start.elapsed().as_seconds_f64());
     }
 }

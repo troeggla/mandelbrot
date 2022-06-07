@@ -13,7 +13,7 @@ fn mandelbrot(z: Complex<f32>, c: Complex<f32>) -> Complex<f32> {
     num::pow(z, 2) + c
 }
 
-pub fn in_mandelbrot_set(c: Complex<f32>, iterations: i32) -> (bool, i32) {
+pub fn in_mandelbrot_set(c: Complex<f32>, iterations: u32) -> (bool, u32) {
     let mut z = c;
 
     for i in 0..iterations {
@@ -47,7 +47,7 @@ fn get_color_pixel(ratio: f32) -> image::Rgb<u8> {
     image::Rgb([r, g, b])
 }
 
-pub fn get_mandelbrot_color(c: Complex<f32>, iterations: i32, color: bool) -> image::Rgb<u8> {
+pub fn get_mandelbrot_color(c: Complex<f32>, iterations: u32, color: bool) -> image::Rgb<u8> {
     let (in_set, iterations_taken) = in_mandelbrot_set(c, iterations);
 
     if in_set {
