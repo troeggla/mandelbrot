@@ -1,6 +1,3 @@
-extern crate image;
-extern crate num;
-
 use num::complex::Complex;
 
 pub struct MandelbrotPoint {

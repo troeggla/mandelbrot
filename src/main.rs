@@ -1,10 +1,3 @@
-extern crate argparse;
-extern crate image;
-extern crate num;
-extern crate pbr;
-extern crate threadpool;
-extern crate time;
-
 mod mandelbrot;
 mod util;
 
