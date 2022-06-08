@@ -44,7 +44,7 @@ fn main() {
         ap.set_description("Renders images of portions of the Mandelbrot set.");
 
         ap.refer(&mut verbose).add_option(&["-v", "--verbose"], StoreTrue, &help_texts[0]);
-        ap.refer(&mut color).add_option(&["-c", "--color"], StoreTrue, &help_texts[1]);
+        ap.refer(&mut color).add_option(&["--color"], StoreTrue, &help_texts[1]);
         ap.refer(&mut dimensions).add_option(&["-s", "--size"], Store, &help_texts[2]);
         ap.refer(&mut center).add_option(&["-c", "--center"], Store, &help_texts[3]);
         ap.refer(&mut r).add_option(&["-r", "--radius"], Store, &help_texts[4]);
