@@ -1,4 +1,4 @@
-pub fn parse_list<T: std::str::FromStr>(dimensions: String, delimiter: &str) -> (T, T) {
+pub fn parse_tuple<T: std::str::FromStr>(dimensions: String, delimiter: &str) -> (T, T) {
     let mut result: Vec<T> = dimensions.split(delimiter).take(2).map(|s| {
         s.parse::<T>().ok().unwrap()
     }).collect();

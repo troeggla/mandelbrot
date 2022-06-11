@@ -41,8 +41,8 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let (width, height) = util::parse_list(args.dimensions, "x");
-    let center: (f32, f32) = util::parse_list(args.center, ",");
+    let (width, height) = util::parse_tuple(args.dimensions, "x");
+    let center: (f32, f32) = util::parse_tuple(args.center, ",");
 
     let start = Instant::now();
     let pool = ThreadPool::new(args.threads);
