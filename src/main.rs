@@ -22,10 +22,10 @@ struct Args {
     #[clap(short, long, default_value="-0.75,0.3", help="Center point of the set to examine")]
     center: String,
 
-    #[clap(short, long, default_value="1000x1000", help="Dimenions of the output image")]
+    #[clap(short, long, default_value="1000x1000", help="Dimensions of the output image")]
     dimensions: String,
 
-    #[clap(short, long, default_value_t=32, help="Number of threads to use")]
+    #[clap(short, long, default_value_t=32, help="Iteration depth")]
     iterations: u32,
 
     #[clap(short, long, default_value_t=10, help="Number of threads to use")]
